@@ -4,6 +4,9 @@ var argv = require('yargs').argv;
 
 var add = 'add';
 var list = 'list';
+var read = 'read';
+var remove = 'remove';
+
 var comando= process.argv[2];
 
 var obj = JSON.parse(fs.readFileSync('directorio.json', 'utf8',function(err,data){
@@ -32,20 +35,63 @@ if (comando == add){
 }
 
 else if (comando == list){
-    
-   //var num= JSON.parse(fs.readFileSync('directorio.json', 'utf8'));
     console.log('Numero de Contacto(s) : ' + obj.contactos.length);  
-    for (var i in obj.contactos) {
-              
+    
+    for (var i in obj.contactos) {          
         console.log('--');
         console.log('nombre : ' + obj.contactos[i].nombre);
         console.log('numero : ' + obj.contactos[i].numero);
         console.log('--');
-        //console.log(obj.contactos[i].nombre)
       }
  }
 
+ else if (comando == read){
+    var file3={ nombre: argv.nombre};
+    //console.log(file3);
+    var encontrar = _.find(obj.contactos,file3);
+    if(encontrar){
+        console.log('Contacto Encontrado');
+        console.log('--');
+        console.log('nombre : ' + encontrar.nombre);
+        console.log('numero : ' + encontrar.numero);
+        console.log('--');
+    }
+    else {
+        console.log('No encontrado');
+        console.log('--');
+    }
+    
+ }
 
+else if(comando == remove){
+    var file4={ nombre: argv.nombre};
+    var encontrar = _.find(obj.contactos,file4);
+    var removido = obj;
+    var i=0;
+    var n=removido.contactos.length;
+
+    //console.log('ENCONTRADO : ' + JSON.stringify(encontrar));
+    //console.log(removido.contactos.length);
+
+    for (i = 0; i < n; i++) {
+        if (removido.contactos[i].nombre == file4.nombre) {
+          removido.contactos.splice(i, 1);
+          break;
+        }
+      }
+
+    if (i == n) console.log('No encontrado');
+    else console.log('Contacto Removido');
+
+    fs.writeFile('directorio.json',JSON.stringify(removido), function (err) {
+        if (err)
+            console.log(err);
+        else
+            console.log('--');
+
+    });
+
+}
 
 
 
